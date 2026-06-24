@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vienna Tour Guide – Speaking Scaffold</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #1a1a2e;
+    color: #f0f0f0;
+    min-height: 100vh;
+    padding: 28px 32px;
+  }
+
+  /* ── NAME SCREEN ── */
+  #name-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    gap: 18px;
+  }
+  #name-screen h1 { font-size: 2rem; color: #ffd700; text-align: center; }
+  #name-screen p  { color: #aaa; font-size: 1rem; text-align: center; }
+  #name-input {
+    font-size: 1.3rem;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid #ffd700;
+    background: #16213e;
+    color: #fff;
+    width: 320px;
+    text-align: center;
+    outline: none;
+  }
+  #name-input::placeholder { color: #555; }
+  #start-btn {
+    background: #ffd700;
+    color: #1a1a2e;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 36px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #start-btn:hover { background: #ffe94d; }
+  #start-btn:disabled { background: #555; color: #999; cursor: default; }
+
+  /* ── SCAFFOLD ── */
+  #scaffold { display: none; }
+  h1.main-title {
+    text-align: center;
+    font-size: 1.6rem;
+    color: #ffd700;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+  .student-name-badge {
+    text-align: center;
+    margin-bottom: 18px;
+    font-size: 1rem;
+    color: #fff;
+  }
+  .student-name-badge span {
+    background: #ffd700;
+    color: #1a1a2e;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 1.05rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+    .card.tips, .card.full { grid-column: 1; }
+  }
+
+  .card {
+    border-radius: 10px;
+    padding: 16px 20px;
+    background: #16213e;
+    border-left: 5px solid;
+  }
+  .card.open  { border-color: #4caf50; }
+  .card.sight { border-color: #2196f3; }
+  .card.close { border-color: #ff9800; }
+  .card.tips  { border-color: #9c27b0; grid-column: 1 / -1; }
+  .card.full  { grid-column: 1 / -1; }
+
+  .card-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .open  .card-label { color: #4caf50; }
+  .sight .card-label { color: #64b5f6; }
+  .close .card-label { color: #ff9800; }
+  .tips  .card-label { color: #ce93d8; }
+
+  .step-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    font-size: 0.68rem;
+    padding: 2px 9px;
+    margin-bottom: 5px;
+    color: #aaa;
+    font-weight: 600;
+  }
+  .card-title {
+    font-size: 0.98rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fff;
+  }
+
+  /* phrase rows */
+  .phrase {
+    font-size: 0.88rem;
+    color: #cfd8dc;
+    margin-bottom: 8px;
+    padding-left: 10px;
+    border-left: 2px solid rgba(255,255,255,0.12);
+    line-height: 1.6;
+  }
+  .phrase em {
+    color: #ffd700;
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* inline short inputs */
+  .fill {
+    border: none;
+    border-bottom: 1.5px dashed #90caf9;
+    background: transparent;
+    color: #90caf9;
+    font-size: 0.88rem;
+    font-family: inherit;
+    outline: none;
+    padding: 2px 4px;
+    vertical-align: bottom;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .fill:focus { border-bottom-color: #ffd700; color: #ffd700; }
+  .fill::placeholder { color: #2a3a5a; }
+
+  /* full-width textarea blocks */
+  .write-block {
+    margin-top: 6px;
+  }
+  .write-label {
+    font-size: 0.75rem;
+    color: #ffd700;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    display: block;
+  }
+  textarea.write-area {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px dashed #90caf9;
+    border-radius: 6px;
+    color: #cfd8dc;
+    font-size: 0.9rem;
+    font-family: inherit;
+    line-height: 1.6;
+    padding: 10px 12px;
+    resize: vertical;
+    outline: none;
+    min-height: 80px;
+  }
+  textarea.write-area:focus {
+    border-color: #ffd700;
+    background: rgba(255,215,0,0.04);
+  }
+  textarea.write-area::placeholder { color: #2a3a5a; }
+
+  /* closing free-write */
+  .close-hint {
+    font-size: 0.82rem;
+    color: #aaa;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .close-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .prompt-chip {
+    background: rgba(255,152,0,0.15);
+    border: 1px solid rgba(255,152,0,0.4);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.78rem;
+    color: #ffb74d;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .prompt-chip:hover { background: rgba(255,152,0,0.3); }
+
+  /* tips */
+  .tip-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+  }
+  @media (max-width: 700px) { .tip-grid { grid-template-columns: 1fr; } }
+  .tip-item {
+    background: rgba(255,255,255,0.06);
+    border-radius: 7px;
+    padding: 9px 12px;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    line-height: 1.5;
+  }
+  .tip-item strong {
+    color: #ce93d8;
+    display: block;
+    margin-bottom: 3px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* action buttons */
+  .action-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 22px 0 6px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 28px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-download {
+    background: #4caf50;
+    color: #fff;
+  }
+  .btn-reset {
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 10px 22px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .btn-reset:hover { border-color: #ffd700; color: #ffd700; }
+
+  .footer {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 0.75rem;
+    color: #444;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAME SCREEN ── -->
+<div id="name-screen">
+  <h1>🗺️ Vienna Tour Guide</h1>
+  <p>Enter your name to get your personal speaking scaffold.</p>
+  <input id="name-input" type="text" placeholder="Your first name …" maxlength="40" autocomplete="off" />
+  <button id="start-btn" disabled>Let's go! →</button>
+</div>
+
+<!-- ── SCAFFOLD ── -->
+<div id="scaffold">
+  <h1 class="main-title">🗺️ Vienna Tour Guide – Speaking Scaffold</h1>
+  <p class="subtitle">Use the <span style="color:#ffd700;font-weight:600">yellow phrases</span> – fill in every blue gap with your own notes</p>
+  <p class="student-name-badge">Guide: <span id="display-name"></span></p>
+
+  <div class="grid">
+
+    <!-- OPENING -->
+    <div class="card open">
+      <div class="step-badge">STEP 1 · ~20 sec</div>
+      <div class="card-label">Opening</div>
+      <div class="card-title">👋 Welcome your group</div>
+      <div class="phrase">
+        <em>Welcome to Vienna!</em> My name is
+        <input class="fill" id="fn" placeholder="your name" style="max-width:160px">
+        and I'll be your guide today.
+      </div>
+      <div class="phrase"><em>Today we're going to explore</em> four famous sights along the Ringstraße.</div>
+      <div class="phrase"><em>Let's get started!</em></div>
+    </div>
+
+    <!-- SIGHT 1 -->
+    <div class="card sight">
+      <div class="step-badge">STEP 2 · ~25 sec</div>
+      <div class="card-label">Sight 1</div>
+      <div class="card-title">📍 Introduce &amp; Describe</div>
+      <div class="phrase">
+        <em>First of all, let's look at</em> the
+        <input class="fill" id="s1-name" placeholder="name of the sight">
+      </div>
+      <div class="phrase">
+        <em>It was built in</em>
+        <input class="fill" id="s1-year" placeholder="year" style="max-width:70px">
+        by
+        <input class="fill" id="s1-arch" placeholder="architect(s)">
+      </div>
+      <div class="write-block">
+        <span class="write-label">What makes it special is …</span>
+        <textarea class="write-area" id="s1-special" placeholder="Write a key fact about this sight …" rows="3"></textarea>
+      </div>
+      <div class="write-block">
+        <span class="write-label">Interestingly, …</span>
+        <textarea class="write-area" id="s1-fun" placeholder="Add a fun or surprising fact …" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- SIGHT 2 -->
+    <div class="card sight">
+      <div class="step-badge">STEP 3 · ~25 sec</div>
+      <div class="card-label">Sight 2</div>
+      <div class="card-title">📍 Introduce &amp; Describe</div>
+      <div class="phrase">
+        <em>Moving on,</em> our next stop is the
+        <input class="fill" id="s2-name" placeholder="name of the sight">
+      </div>
+      <div class="write-block">
+        <span class="write-label">It is famous for …</span>
+        <textarea class="write-area" id="s2-famous" placeholder="Write what this sight is known for …" rows="3"></textarea>
+      </div>
+      <div class="write-block">
+        <span class="write-label">You may not know that …</span>
+        <textarea class="write-area" id="s2-fun" placeholder="Add a surprising detail …" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- SIGHT 3 -->
+    <div class="card sight">
+      <div class="step-badge">STEP 4 · ~25 sec</div>
+      <div class="card-label">Sight 3</div>
+      <div class="card-title">📍 Introduce &amp; Describe</div>
+      <div class="phrase">
+        <em>If you look to your left,</em> you'll see the
+        <input class="fill" id="s3-name" placeholder="name of the sight">
+      </div>
+      <div class="phrase">
+        <em>It was opened in</em>
+        <input class="fill" id="s3-year" placeholder="year" style="max-width:70px">
+      </div>
+      <div class="write-block">
+        <span class="write-label">Key fact …</span>
+        <textarea class="write-area" id="s3-fact" placeholder="What should tourists know about this sight?" rows="3"></textarea>
+      </div>
+      <div class="write-block">
+        <span class="write-label">A fun fact is …</span>
+        <textarea class="write-area" id="s3-fun" placeholder="Write something interesting …" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- SIGHT 4 -->
+    <div class="card sight">
+      <div class="step-badge">STEP 5 · ~25 sec</div>
+      <div class="card-label">Sight 4</div>
+      <div class="card-title">📍 Introduce &amp; Describe</div>
+      <div class="phrase">
+        <em>Our last stop is</em> the
+        <input class="fill" id="s4-name" placeholder="name of the sight">
+      </div>
+      <div class="write-block">
+        <span class="write-label">As you can see, …</span>
+        <textarea class="write-area" id="s4-see" placeholder="Describe what tourists can observe …" rows="2"></textarea>
+      </div>
+      <div class="write-block">
+        <span class="write-label">What's particularly interesting here is …</span>
+        <textarea class="write-area" id="s4-interesting" placeholder="Add a key fact or story …" rows="3"></textarea>
+      </div>
+    </div>
+
+    <!-- CLOSING – free write -->
+    <div class="card close full">
+      <div class="step-badge">STEP 6 · ~20 sec</div>
+      <div class="card-label">Closing</div>
+      <div class="card-title">✍️ Write your own ending</div>
+      <p class="close-hint">No scaffold this time – write your closing in your own words! You can use the chips below for ideas.</p>
+      <div class="close-prompts">
+        <span class="prompt-chip" onclick="appendChip('Thank the group')">Thank the group</span>
+        <span class="prompt-chip" onclick="appendChip('Say what you enjoyed most')">Say what you enjoyed most</span>
+        <span class="prompt-chip" onclick="appendChip('Invite questions')">Invite questions</span>
+        <span class="prompt-chip" onclick="appendChip('Recommend visiting again')">Recommend visiting again</span>
+        <span class="prompt-chip" onclick="appendChip('Say goodbye')">Say goodbye</span>
+      </div>
+      <textarea class="write-area" id="closing" placeholder="Write your closing here in full sentences …" rows="5" style="min-height:110px"></textarea>
+    </div>
+
+    <!-- TIPS -->
+    <div class="card tips">
+      <div class="card-label">💡 Remember</div>
+      <div class="tip-grid">
+        <div class="tip-item"><strong>⏱ Pace</strong>Speak slowly and clearly – aim for 2 minutes. Time yourself!</div>
+        <div class="tip-item"><strong>👀 Eye contact</strong>Look up from your screen as often as you can.</div>
+        <div class="tip-item"><strong>🔗 Connect ideas</strong>Use the yellow phrases to link your sights smoothly.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-download" onclick="downloadText()">⬇ Download my monologue</button>
+    <button class="btn-reset" onclick="resetAll()">↩ Change name</button>
+  </div>
+
+  <div class="footer">HAK Feldbach · Vulkanland Business School · Vienna Speaking Task</div>
+</div>
+
+<script>
+  const nameInput  = document.getElementById('name-input');
+  const startBtn   = document.getElementById('start-btn');
+  const nameScreen = document.getElementById('name-screen');
+  const scaffold   = document.getElementById('scaffold');
+  const displayName = document.getElementById('display-name');
+  const fnField    = document.getElementById('fn');
+
+  nameInput.addEventListener('input', () => {
+    startBtn.disabled = nameInput.value.trim().length < 2;
+  });
+  nameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !startBtn.disabled) launch();
+  });
+  startBtn.addEventListener('click', launch);
+
+  function launch() {
+    const name = nameInput.value.trim();
+    displayName.textContent = name;
+    fnField.value = name;
+    nameScreen.style.display = 'none';
+    scaffold.style.display   = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function resetAll() {
+    scaffold.style.display   = 'none';
+    nameScreen.style.display = 'flex';
+    nameInput.value = '';
+    startBtn.disabled = true;
+    document.querySelectorAll('.fill').forEach(f => f.value = '');
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+  }
+
+  // Append a closing prompt chip text to the closing textarea
+  function appendChip(text) {
+    const ta = document.getElementById('closing');
+    const cur = ta.value.trim();
+    ta.value = cur ? cur + ' ' : '';
+    ta.focus();
+  }
+
+  function g(id) {
+    const el = document.getElementById(id);
+    return el ? (el.value || '').trim() : '';
+  }
+
+  function downloadText() {
+    const name = g('fn') || displayName.textContent || 'Student';
+
+    const lines = [
+      '================================================',
+      '  VIENNA TOUR GUIDE – SPEAKING MONOLOGUE',
+      `  Name: ${name}`,
+      '  HAK Feldbach · Vulkanland Business School',
+      '================================================',
+      '',
+      '--- OPENING ---',
+      `Welcome to Vienna! My name is ${name} and I'll be your guide today.`,
+      "Today we're going to explore four famous sights along the Ringstraße.",
+      "Let's get started!",
+      '',
+      '--- SIGHT 1 ---',
+      `First of all, let's look at the ${g('s1-name')}.`,
+      `It was built in ${g('s1-year')} by ${g('s1-arch')}.`,
+      `What makes it special is ${g('s1-special')}`,
+      `Interestingly, ${g('s1-fun')}`,
+      '',
+      '--- SIGHT 2 ---',
+      `Moving on, our next stop is the ${g('s2-name')}.`,
+      `It is famous for ${g('s2-famous')}`,
+      `You may not know that ${g('s2-fun')}`,
+      '',
+      '--- SIGHT 3 ---',
+      `If you look to your left, you'll see the ${g('s3-name')}.`,
+      `It was opened in ${g('s3-year')}.`,
+      g('s3-fact'),
+      `A fun fact is ${g('s3-fun')}`,
+      '',
+      '--- SIGHT 4 ---',
+      `Our last stop is the ${g('s4-name')}.`,
+      `As you can see, ${g('s4-see')}`,
+      `What's particularly interesting here is ${g('s4-interesting')}`,
+      '',
+      '--- CLOSING ---',
+      g('closing'),
+      '',
+      '================================================',
+    ];
+
+    const text = lines.join('\n');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `Vienna_Monologue_${name.replace(/\s+/g,'_')}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
